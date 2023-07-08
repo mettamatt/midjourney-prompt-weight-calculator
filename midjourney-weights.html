@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Weight Calculation</title>
+  </head>
+  <body>
+    <h1>Weight Calculation</h1>
+    
+    <!-- Positive Weight Input -->
+    <label for="positiveWeight">Positive Weight:</label>
+    <input type="number" id="positiveWeight" value="60" min="0" max="100"><span>%</span><br>
+    
+    <!-- Negative Weight Display -->
+    <label for="negativeWeight">Negative Weight:</label>
+    <span id="negativeWeightValue"></span><br>
+    
+    <!-- Positive Prompts Input -->
+    <h2>Positive Prompts</h2>
+    <label for="positivePromptCount">Number of Positive Prompts:</label>
+    <input type="number" id="positivePromptCount" min="0" max="10"><br>
+    <div id="positivePromptsContainer"></div>
+
+    <!-- Negative Prompts Input -->
+    <h2>Negative Prompts</h2>
+    <label for="negativePromptCount">Number of Negative Prompts:</label>
+    <input type="number" id="negativePromptCount" min="0" max="10"><br>
+    <div id="negativePromptsContainer"></div>
+
+    <!-- Calculation Button -->
+    <br>
+    <button onclick="calculateAndDisplay()">Calculate</button>
+    <p id="result"></p>
+
+    <script>
+      function calculateWeights(positiveWeight, negativeWeight, positivePrompts, negativePrompts) {
+        // Setting defaults and handling edge cases
+        if (positiveWeight === undefined || isNaN(positiveWeight)) positiveWeight = 0.6;
+        if (negativeWeight === undefined) negativeWeight = 1 - positiveWeight;
+
+        var positivePromptCount = positivePrompts.length;
+        var negativePromptCount = negativePrompts.length;
+
+        // Calculate weights per prompt
+        var positivePromptWeight = Math.ceil(positiveWeight / positivePromptCount);
+        var negativePromptWeight = Math.floor(negativeWeight / negativePromptCount);
+
+        // Assign weights to prompts
+        for (var i = 0; i < positivePromptCount; i++) {
+          positivePrompts[i].weight = positivePromptWeight;
+        }
+        for (var i = 0; i < negativePromptCount; i++) {
+          negativePrompts[i].weight = negativePromptWeight;
+        }
+
+        // Generate final prompt
+        var finalPrompt = '';
+        positivePrompts.forEach(prompt => finalPrompt += `${prompt.prompt}::${prompt.weight} `);
+        negativePrompts.forEach(prompt => finalPrompt += `${prompt.prompt}::-${prompt.weight} `);
+        return finalPrompt.trim();
+      }
+
+      function calculateAndDisplay() {
+        // Fetching and handling user inputs
+        var positiveWeight = parseInt(document.getElementById('positiveWeight').value) || 0;
+        positiveWeight = Math.min(Math.max(positiveWeight, 0), 100);
+        document.getElementById('positiveWeight').value = String(positiveWeight);
+
+        var negativeWeight = 100 - positiveWeight;
+        
+      // Here we add a check to prevent the total weight from becoming negative
+        if (negativeWeight < 0) {
+          alert("Total weight cannot be negative. Please adjust your positive weight.");
+          return;  // Exit the function early
+        }
+
+        var positivePromptCount = Math.min(parseInt(document.getElementById('positivePromptCount').value) || 0, 10);
+        var negativePromptCount = Math.min(parseInt(document.getElementById('negativePromptCount').value) || 0, 10);
+
+        var positivePrompts = [];
+        for (var i = 1; i <= positivePromptCount; i++) {
+          var promptText = document.getElementById('positivePrompt' + i).value;
+          positivePrompts.push({ prompt: promptText });
+        }
+
+        var negativePrompts = [];
+        for (var i = 1; i <= negativePromptCount; i++) {
+          var promptText = document.getElementById('negativePrompt' + i).value;
+          negativePrompts.push({ prompt: promptText });
+        }
+
+        // Generate final prompt and display
+        var finalPrompt = calculateWeights(positiveWeight, negativeWeight, positivePrompts, negativePrompts);
+        document.getElementById('result').textContent = 'Final Prompt: ' + finalPrompt;
+        document.getElementById('negativeWeightValue').textContent = negativeWeight + '%';
+      }
+
+      function addPrompts(containerId, promptCountId, promptContainerId, promptPrefix) {
+        var count = Math.min(parseInt(document.getElementById(promptCountId).value) || 0, 10);
+        var container = document.getElementById(containerId);
+
+        // Save existing prompt values
+        var existingPrompts = Array.from(container.querySelectorAll('input')).map(input => input.value);
+        container.innerHTML = '';
+
+        // Create new prompts and restore existing values
+        for (var i = 1; i <= count; i++) {
+          var label = document.createElement('label');
+          label.textContent = `${promptPrefix}${i}:`;
+          var input = document.createElement('input');
+          input.type = 'text';
+          input.id = `${promptContainerId}${i}`;
+          input.value = existingPrompts[i - 1] || '';
+          input.addEventListener('input', calculateAndDisplay);
+          container.append(label, input, document.createElement('br'));
+        }
+      }
+
+      // Add event listeners for input changes
+      document.getElementById('positivePromptCount').addEventListener('input', () =>
+        addPrompts('positivePromptsContainer', 'positivePromptCount', 'positivePrompt', 'Positive Prompt ')
+      );
+      document.getElementById('negativePromptCount').addEventListener('input', () =>
+        addPrompts('negativePromptsContainer', 'negativePromptCount', 'negativePrompt', 'Negative Prompt ')
+      );
+      document.getElementById('positiveWeight').addEventListener('input', calculateAndDisplay);
+
+      // Initial calculation and display
+      calculateAndDisplay();
+    </script>
+  </body>
+</html>
