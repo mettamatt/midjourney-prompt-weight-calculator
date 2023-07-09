@@ -5,31 +5,34 @@
     <style>
       :root {
         --border-light: 1px solid #ddd;
-        --margin-small: .5em;
-        --margin-large: 2em;
-        --font-bold: bold;
+        --margin-small: 0.5em;
+        --margin-large: 1em;
+        --font-bold: 700;
         --font-large: 1.5em;
         --legend-background: #ddd;
-        --legend-padding: .5em;
+        --legend-padding: 0.5em;
         --legend-border: 1px solid #333;
+        --input-width: 2rem;
+        --button-padding: 1em 2em;
+        --result-font: 'Courier New', monospace;
       }
 
       body {
         font-family: Arial, sans-serif;
         margin: 0 auto;
-        max-width: 800px;
-        padding: 2em;
+        max-width: 50em;
+        padding: var(--margin-large);
       }
 
       input[type="number"],
       input[type="text"],
       #negativeWeightValue {
         margin: var(--margin-small) 0;
-        width: 30px;
+        width: var(--input-width);
       }
-      
+
       input[type="text"] {
-        width: 100px;
+        width: 6.25em;
       }
 
       label,
@@ -38,8 +41,8 @@
       }
 
       section {
-        padding: 1em 1em 0.5em 1em;
-        margin: 1em 0;
+        padding: 1em;
+        margin: var(--margin-large) 0;
         border: var(--border-light);
       }
 
@@ -65,6 +68,17 @@
       .input-group label {
         margin-right: var(--margin-small);
       }
+      
+      .result-group {
+        font-family: var(--result-font);
+        font-weight: var(--font-bold);
+      }
+
+      .result-input {
+        font-family: var(--result-font);
+        font-weight: var(--font-bold);
+        font-size: 0.9rem; 
+      }
 
       #result {
         box-sizing: border-box;
@@ -73,27 +87,28 @@
       }
 
       button {
-        padding: 1em 2em;
+        padding: var(--button-padding);
       }
 
       .flash {
         animation: flash 1s;
+        background-color: transparent;
       }
 
       #toast {
-        visibility: hidden; 
-        min-width: 250px;
-        margin-left: -125px;
-        background-color: #333; 
-        color: #fff; 
-        text-align: center; 
-        border-radius: 2px;
-        padding: 16px; 
-        position: fixed; 
-        z-index: 1; 
-        left: 50%; 
-        bottom: 30px; 
-        font-size: 17px;
+        visibility: hidden;
+        min-width: 15.625em;
+        margin-left: -7.8125em;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 0.125em;
+        padding: 1em;
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        bottom: 1.875em;
+        font-size: 1.0625em;
         opacity: 0;
         transition: opacity 0.5s, visibility 0.5s;
       }
@@ -105,8 +120,9 @@
       }
 
       @keyframes flash {
-        0% {background-color: #FFFF99;}
-        100% {background-color: #FFFFFF;}
+        0% {background-color: transparent;}
+        50% {background-color: yellow;}
+        100% {background-color: transparent;}
       }
     </style>
   </head>
@@ -125,9 +141,9 @@
     </section>
     <section>
       <legend>Results</legend>
-      <div class="input-group" style="font-family: 'Courier New', monospace; font-weight: bold;">
+      <div class="input-group result-group">
         <label for="result">/imagine</label>
-        <input type="text" id="result" style="font-family: 'Courier New', monospace; font-weight: bold; font-size: 0.9em;" readonly>
+        <input type="text" id="result" class="result-input" readonly>
       </div>
       <div class="input-group">
         <button id="copyToClipboard">Copy</button>
