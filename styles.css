@@ -139,3 +139,60 @@ button {
   50% {background-color: yellow;}
   100% {background-color: transparent;}
 }
+
+/* Button styling for 'Show Instructions' and 'Copy' */
+#showInstructions,
+#copyToClipboard {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: block; 
+  font-size: 16px;
+  margin: 4px auto;
+  cursor: pointer;
+}
+
+/* The overlay */
+.overlay {
+  position: fixed; /* Fixed/sticky position */
+  display: none; /* Hidden by default */
+  width: 100%; /* Full width (cover the whole page) */
+  height: 100%; /* Full height (cover the whole page) */
+  top: 0; 
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+  cursor: pointer; /* Add a pointer on hover */
+}
+
+/* The overlay content */
+.overlay-content {
+  position: relative;
+  top: 25%;
+  width: 80%; /* Specify a width */
+  margin: 0 auto; /* Center the content */
+  max-width: 800px; /* Maximum width */
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  z-index: 5;
+}
+
+/* The close button */
+#closeInstructions,
+#clearLocalStorage {
+  background-color: #ff6347; /* Red */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}

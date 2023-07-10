@@ -1,51 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Weight Calculation</title>
-    <link rel="stylesheet" href="styles.css">
-  </head>
-  <body>
-    <h1>Weight Calculation</h1>
-    <section>
-      <legend>Global Weights</legend>
-      <div class="input-group">
-        <label class="input-group__label" for="positiveWeight">Positive Weight:</label>
-        <input type="number" id="positiveWeight" value="60" min="0" max="100"><span>%</span>
-      </div>
-      <div class="input-group">
-        <label class="input-group__label" for="negativeWeightValue">Negative Weight:</label>
-        <input type="number" id="negativeWeightValue" readonly><span>%</span>
-      </div>
-    </section>
-    <section>
-      <legend>Results</legend>
-      <div class="input-group result-group">
-        <label class="input-group__label" for="result">/imagine</label>
-        <input type="text" id="result" class="result-input" readonly>
-      </div>
-      <div class="input-group">
-        <button id="copyToClipboard">Copy</button>
-      </div>
-    </section>
-    <section>
-      <legend>Positive Prompt</legend>
-      <div class="input-group">
-        <label class="input-group__label" for="positivePromptCount">Number of Positive Prompts:</label>
-        <input type="number" id="positivePromptCount" min="0" max="9" value="1">
-      </div>
-      <div id="positive-prompts-container"></div>
-    </section>
-    <section>
-      <legend>Negative Prompt</legend>
-      <div class="input-group">
-        <label class="input-group__label" for="negativePromptCount">Number of Negative Prompts:</label>
-        <input type="number" id="negativePromptCount" min="0" max="9" value="1">
-      </div>
-      <div id="negative-prompts-container"></div>
-    </section>
-    <button id="clearLocalStorage">Clear Local Storage</button>
-    <div id="toast"></div>
+<head>
+  <title>Midjourney Multi Prompt Weight Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>Midjourney Multi Prompt Weight Calculator</h1>
+  <p>
+    This tool aids in generating accurately weighted multi prompts for <a href="https://www.midjourney.com/">Midjourney</a>, a generative AI service creating images from natural language descriptions, known as prompts. Note: Additional parameters (if required) will have to be added by the user.
+  </p>
+  <p>
+    An example of how this tool works: If you want an image of the Swiss Alps but are getting unwanted elements like houses and trees, you could set the positive weight to 60% and the negative weight to 40%. Input "beautiful swiss alps" and "landscape" as positive prompts and "house" and "trees" as negative prompts. The script would generate the multi prompt: "beautiful swiss alps::30 landscape::30 houses::-20 trees::-20".
+  </p>
+  <p>
+    Follow the steps below to use this tool:
+  </p>
 
-    <script src="main.js"></script>
-  </body>
+  <!-- Overlay content -->
+  <button id="showInstructions">Show Instructions</button>
+  <div class="overlay" id="instructionsOverlay">
+    <div class="overlay-content">
+      <h2>Detailed Instructions</h2>
+      <ol>
+        <li><strong>Global Weights:</strong> Set the positive weight using the "Positive Weight" input. The negative weight is automatically calculated as 100 minus the positive weight. This will help in guiding the Midjourney AI in focusing on specific elements of your preference.</li>
+        <li><strong>Generated Multi Prompt:</strong> The generated multi prompt will be displayed here. This multi prompt is the weighted combination of your input that you can directly use on Midjourney. The "Copy" button lets you easily copy the generated prompt.</li>
+        <li><strong>Positive Prompts:</strong> Specify the number of positive prompts in the "Number of Positive Prompts" input. Positive prompts guide the AI towards desired elements in the generated image.</li>
+        <li><strong>Negative Prompts:</strong> Specify the number of negative prompts in the "Number of Negative Prompts" input. Negative prompts guide the AI away from undesired elements.</li>
+        <li><strong>Clear Local Storage:</strong> To reset the tool and clear saved data, click the "Clear Local Storage" button.</li>
+      </ol>
+      <p>
+        For further details on using Midjourney and prompts, refer to the official Midjourney documentation.
+      </p>
+      <button id="closeInstructions">Close</button>
+    </div>
+  </div>
+
+  <section>
+    <legend>Global Weights</legend>
+    <div class="input-group">
+      <label class="input-group__label" for="positiveWeight">Positive Weight:</label>
+      <input type="number" id="positiveWeight" value="60" min="0" max="100"><span>%</span>
+    </div>
+    <div class="input-group">
+      <label class="input-group__label" for="negativeWeightValue">Negative Weight:</label>
+      <input type="number" id="negativeWeightValue" readonly><span>%</span>
+    </div>
+    <p>
+      Input the positive weight as a percentage. The tool will automatically calculate the negative weight as the remaining percentage.
+      <br>
+      <em>Example: For an image of the Swiss Alps with less houses and trees, you could set the positive weight to 60% and the remaining 40% is considered as negative weight.</em>
+    </p>
+  </section>
+  <section>
+    <legend>Generated Multi Prompt</legend>
+    <div class="input-group result-group">
+      <label class="input-group__label" for="result">/imagine </label>
+      <input type="text" id="result" class="result-input" readonly>
+    </div>
+    <div class="input-group">
+      <button id="copyToClipboard">Copy</button>
+    </div>
+    <p>
+      Your generated multi prompt will be displayed here. Click the "Copy" button to easily use this prompt with Midjourney.
+      <br>
+      <em>Example: For positive prompts like "beautiful swiss alps" and "landscape", and negative prompts like "house" and "trees", the tool will generate a corresponding multi prompt.</em>
+    </p>
+  </section>
+  <section>
+    <legend>Positive Prompts</legend>
+    <div class="input-group">
+      <label class="input-group__label" for="positivePromptCount">Number of Positive Prompts:</label>
+      <input type="number" id="positivePromptCount" min="0" max="9" value="1">
+    </div>
+    <div id="positive-prompts-container"></div>
+    <p>
+      Indicate the number of positive prompts using the "Number of Positive Prompts" input. Then, provide the text for each positive prompt in their respective input boxes. These prompts direct the AI towards elements you want to see in the image.
+    </p>
+  </section>
+  <section>
+    <legend>Negative Prompts</legend>
+    <div class="input-group">
+      <label class="input-group__label" for="negativePromptCount">Number of Negative Prompts:</label>
+      <input type="number" id="negativePromptCount" min="0" max="9" value="1">
+    </div>
+    <div id="negative-prompts-container"></div>
+    <p>
+      Indicate the number of negative prompts using the "Number of Negative Prompts" input. Then, provide the text for each negative prompt in their respective input boxes. These prompts help the AI avoid elements you don't want in the image.
+    </p>
+  </section>
+  <button id="clearLocalStorage">Clear Local Storage</button>
+  <div id="toast"></div>
+
+  <script src="main.js"></script>
+</body>
 </html>

@@ -2,6 +2,11 @@ const localStorageKey = 'weightCalculationData';
 const negativeWeightValueElement = document.getElementById('negativeWeightValue');
 const resultElement = document.getElementById('result');
 
+// Open instructions overlay
+const instructionsOverlay = document.getElementById('instructionsOverlay');
+const openInstructionsButton = document.getElementById('openInstructions');
+const closeInstructionsButton = document.getElementById('closeInstructions');
+
 const getDataFromLocalStorage = () => {
   return JSON.parse(localStorage.getItem(localStorageKey)) || {};
 };
@@ -184,6 +189,26 @@ document.getElementById('positiveWeight').addEventListener('input', () => {
   updateNegativeWeight(negativeWeight);
 });
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  const instructionsOverlay = document.getElementById('instructionsOverlay');
+  const showInstructionsButton = document.getElementById('showInstructions');
+  const closeInstructionsButton = document.getElementById('closeInstructions');
+
+  showInstructionsButton.addEventListener('click', () => {
+      instructionsOverlay.style.display = 'block';
+  });
+
+  closeInstructionsButton.addEventListener('click', () => {
+      instructionsOverlay.style.display = 'none';
+  });
+
+  window.addEventListener('click', (event) => {
+      if (event.target == instructionsOverlay) {
+          instructionsOverlay.style.display = 'none';
+      }
+  });
+});
+
 window.onload = () => {
   const data = getDataFromLocalStorage();
 
@@ -202,7 +227,7 @@ window.onload = () => {
   addPrompts('negative-prompts-container', 'negativePromptCount', 'negativePrompt');
   
   document.getElementById('positiveWeight').addEventListener('input', calculateAndDisplay);
-
+    
   const clearLocalStorageButton = document.getElementById('clearLocalStorage');
   clearLocalStorageButton.addEventListener('click', () => {
     localStorage.removeItem(localStorageKey);
@@ -212,11 +237,34 @@ window.onload = () => {
   document.getElementById('copyToClipboard').addEventListener('click', function() {
     let finalPromptText = document.getElementById('result').value;
 
-    navigator.clipboard.writeText(finalPromptText).then(function() {
+    if (navigator.clipboard) {
+      // Use the Clipboard API if available
+      navigator.clipboard.writeText(finalPromptText).then(function() {
+        showToast("Copied to clipboard!");
+      }, function(err) {
+        showToast("Could not copy to clipboard!");
+      });
+    } else if (window.clipboardData) {
+      // For Internet Explorer
+      window.clipboardData.setData('Text', finalPromptText);
       showToast("Copied to clipboard!");
-    }, function(err) {
-      showToast("Could not copy to clipboard!");
-    });
+    } else {
+      // Fallback for other browsers
+      var textArea = document.createElement("textarea");
+      textArea.value = finalPromptText;
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        var successful = document.execCommand('copy');
+        showToast(successful ? "Copied to clipboard!" : "Could not copy to clipboard!");
+      } catch (err) {
+        showToast("Could not copy to clipboard!");
+      }
+
+      document.body.removeChild(textArea);
+    }
   });
   calculateAndDisplay();
 }
