@@ -1,40 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Easily create weighted multi prompts for Midjourney, an AI tool generating images from textual descriptions (prompts).">
   <title>Midjourney Multi Prompt Weight Calculator</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <h1>Midjourney Multi Prompt Weight Calculator</h1>
   <p>
-    This tool aids in generating accurately weighted multi prompts for <a href="https://www.midjourney.com/">Midjourney</a>, a generative AI service creating images from natural language descriptions, known as prompts. Note: Additional parameters (if required) will have to be added by the user.
-  </p>
-  <p>
-    An example of how this tool works: If you want an image of the Swiss Alps but are getting unwanted elements like houses and trees, you could set the positive weight to 60% and the negative weight to 40%. Input "beautiful swiss alps" and "landscape" as positive prompts and "house" and "trees" as negative prompts. The script would generate the multi prompt: "beautiful swiss alps::30 landscape::30 houses::-20 trees::-20".
-  </p>
-  <p>
-    Follow the steps below to use this tool:
+    Easily create weighted multi prompts for <a href="https://www.midjourney.com/">Midjourney</a>, an AI tool generating images from textual descriptions (prompts). This calculator does the weight distribution; add <a href="https://docs.midjourney.com/docs/parameter-list">extra parameters</a> manually (stylize, seed, aspect).
   </p>
 
   <!-- Overlay content -->
-  <button id="showInstructions">Show Instructions</button>
+  <button id="showInstructions" title="View detailed instructions" aria-label="View detailed instructions">Instructions</button>
   <div class="overlay" id="instructionsOverlay">
     <div class="overlay-content">
-      <h2>Detailed Instructions</h2>
+      <h2>Instructions</h2>
       <ol>
-        <li><strong>Global Weights:</strong> Set the positive weight using the "Positive Weight" input. The negative weight is automatically calculated as 100 minus the positive weight. This will help in guiding the Midjourney AI in focusing on specific elements of your preference.</li>
-        <li><strong>Generated Multi Prompt:</strong> The generated multi prompt will be displayed here. This multi prompt is the weighted combination of your input that you can directly use on Midjourney. The "Copy" button lets you easily copy the generated prompt.</li>
-        <li><strong>Positive Prompts:</strong> Specify the number of positive prompts in the "Number of Positive Prompts" input. Positive prompts guide the AI towards desired elements in the generated image.</li>
-        <li><strong>Negative Prompts:</strong> Specify the number of negative prompts in the "Number of Negative Prompts" input. Negative prompts guide the AI away from undesired elements.</li>
-        <li><strong>Clear Local Storage:</strong> To reset the tool and clear saved data, click the "Clear Local Storage" button.</li>
+        <li><strong>Global Weights:</strong> How much "strength" the positive prompts have compared to the negative prompts. By default positive prompts account for 60% of the weight. The tool calculates negative weight automatically. Since Midjourney requires that <a href="https://docs.midjourney.com/docs/multi-prompts#negative-prompt-weights">the sum of ALL weights must be a positive number</a>, the minimum strength of positive weights are 51%.</li>
+        <li><strong>Generated Multi Prompt:</strong> Displays the generated prompt. Use the "Copy" button for easy use in Midjourney.</li>
+        <li><strong>Positive/Negative Prompts:</strong> Specify the count of each, then provide the prompt text in their respective input boxes. Max of 9 prompts each. This is an arbitrary limitation for best practices, not a Midjourney requirement.</li>
+        <li><strong>Clear Local Storage:</strong> Resets the tool and clears any saved data.</li>
       </ol>
       <p>
-        For further details on using Midjourney and prompts, refer to the official Midjourney documentation.
+        Refer to <a href="https://docs.midjourney.com/docs/quick-start">Midjourney's official documentation</a> for more on prompts.
       </p>
-      <button id="closeInstructions">Close</button>
+      <button id="closeInstructions" title="Close the instructions" aria-label="Close the instructions">Close</button>
     </div>
   </div>
-
   <section>
     <legend>Global Weights</legend>
     <div class="input-group">
@@ -46,9 +41,9 @@
       <input type="number" id="negativeWeightValue" readonly><span>%</span>
     </div>
     <p>
-      Input the positive weight as a percentage. The tool will automatically calculate the negative weight as the remaining percentage.
+      Input the positive weight. Negative weight is calculated automatically.
       <br>
-      <em>Example: For an image of the Swiss Alps with less houses and trees, you could set the positive weight to 60% and the remaining 40% is considered as negative weight.</em>
+      <em>Example: For an image of the "Swiss Alps with less houses and trees", set positive weight to 60%. The remaining 40% is the negative weight.</em>
     </p>
   </section>
   <section>
@@ -58,37 +53,36 @@
       <input type="text" id="result" class="result-input" readonly>
     </div>
     <div class="input-group">
-      <button id="copyToClipboard">Copy</button>
+      <button id="copyToClipboard" title="Copy the generated prompt to clipboard">Copy</button>
     </div>
     <p>
-      Your generated multi prompt will be displayed here. Click the "Copy" button to easily use this prompt with Midjourney.
-      <br>
-      <em>Example: For positive prompts like "beautiful swiss alps" and "landscape", and negative prompts like "house" and "trees", the tool will generate a corresponding multi prompt.</em>
+      Your multi prompt appears here. Use the "Copy" button for easy use in Midjourney.
     </p>
   </section>
   <section>
     <legend>Positive Prompts</legend>
     <div class="input-group">
-      <label class="input-group__label" for="positivePromptCount">Number of Positive Prompts:</label>
+      <label class="input-group__label" for="positivePromptCount">Count:</label>
       <input type="number" id="positivePromptCount" min="0" max="9" value="1">
     </div>
     <div id="positive-prompts-container"></div>
     <p>
-      Indicate the number of positive prompts using the "Number of Positive Prompts" input. Then, provide the text for each positive prompt in their respective input boxes. These prompts direct the AI towards elements you want to see in the image.
+      Specify the count of positive prompts, then provide the text for each in the given input boxes. Positive prompts emphasize desired image elements.
     </p>
   </section>
   <section>
     <legend>Negative Prompts</legend>
     <div class="input-group">
-      <label class="input-group__label" for="negativePromptCount">Number of Negative Prompts:</label>
+      <label class="input-group__label" for="negativePromptCount">Count:</label>
       <input type="number" id="negativePromptCount" min="0" max="9" value="1">
     </div>
     <div id="negative-prompts-container"></div>
     <p>
-      Indicate the number of negative prompts using the "Number of Negative Prompts" input. Then, provide the text for each negative prompt in their respective input boxes. These prompts help the AI avoid elements you don't want in the image.
+      Specify the count of negative prompts, then provide the text for each in the given input boxes. Negative prompts help eliminate unwanted image elements.
     </p>
   </section>
-  <button id="clearLocalStorage">Clear Local Storage</button>
+  <button id="clearLocalStorage" title="Reset the tool and clear saved data" aria-label="Reset the tool and clear saved data">Clear</button>
+  <p class="credit"><em>By <a href="https://www.gpromptyourself.com/">Matt Westgate</a>. Author of <a href="https://a.co/d/30EYZAS">Go Prompt Yourself!</a></em></p>
   <div id="toast"></div>
 
   <script src="main.js"></script>
