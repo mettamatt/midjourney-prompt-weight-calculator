@@ -109,7 +109,7 @@ const addPrompts = (containerId, promptCountId, promptPrefix) => {
   }
 
   for (let i = 1; i <= count; i++) {
-    addPrompt(i, promptPrefix, container, data);
+    addPrompt(i, promptPrefix, container, data, count);
     const promptInput = document.getElementById(`${promptPrefix}${i}`);
     if (promptInput) {
       promptInput.value = data[promptInput.id] || "";
@@ -119,7 +119,7 @@ const addPrompts = (containerId, promptCountId, promptPrefix) => {
   calculateAndDisplay();
 };
 
-const addPrompt = (index, promptPrefix, container) => {
+const addPrompt = (index, promptPrefix, container, count) => {
   const prompt = document.createElement('input');
   prompt.id = `${promptPrefix}${index}`;
   prompt.classList.add('prompt-input');
