@@ -1,11 +1,15 @@
 const localStorageKey = 'weightCalculationData';
+
+// Store DOM elements in variables for reuse
+const positiveWeightElement = document.getElementById('positiveWeight');
 const negativeWeightValueElement = document.getElementById('negativeWeightValue');
 const resultElement = document.getElementById('result');
-
-// Open instructions overlay
 const instructionsOverlay = document.getElementById('instructionsOverlay');
-const openInstructionsButton = document.getElementById('openInstructions');
+const showInstructionsButton = document.getElementById('showInstructions');
 const closeInstructionsButton = document.getElementById('closeInstructions');
+const positivePromptCountElement = document.getElementById('positivePromptCount');
+const negativePromptCountElement = document.getElementById('negativePromptCount');
+const clearLocalStorageButton = document.getElementById('clearLocalStorage');
 
 const getDataFromLocalStorage = () => {
   return JSON.parse(localStorage.getItem(localStorageKey)) || {};
@@ -42,7 +46,6 @@ const calculateWeights = (positiveWeight = 60, negativeWeight = 100 - positiveWe
 const formatNumber = (num) => Number.isInteger(num) ? num : num.toFixed(2);
 
 const getPositiveWeight = () => {
-  const positiveWeightElement = document.getElementById('positiveWeight');
   const positiveWeight = parseInt(positiveWeightElement.value) || 0;
   return positiveWeight;
 }
@@ -103,7 +106,7 @@ const calculateAndDisplay = () => {
 }
 
 const addPrompts = (containerId, promptCountId, promptPrefix) => {
-  const countElement = document.getElementById(promptCountId);
+  const countElement = promptCountId === 'positivePromptCount' ? positivePromptCountElement : negativePromptCountElement;
   const count = Math.min(Number(countElement.value) || 0, 9);
   const container = document.getElementById(containerId);
 
@@ -150,15 +153,19 @@ const addPrompt = (index, promptPrefix, container, count) => {
 };
 
 const showToast = message => {
+  const currentScrollY = window.scrollY;
+
   const toast = document.getElementById("toast");
   toast.textContent = "";
   toast.insertAdjacentHTML("afterbegin", message);
   toast.classList.add("show");
 
+  window.scrollTo(0, currentScrollY);
+
   setTimeout(() => { 
     toast.classList.remove("show");
   }, 4000);
-}      
+}
 
 const attachPromptCountListener = (promptCountId, containerId, promptPrefix) => {
   const promptCountElement = document.getElementById(promptCountId);
@@ -190,10 +197,6 @@ document.getElementById('positiveWeight').addEventListener('input', () => {
 });
 
 document.addEventListener('DOMContentLoaded', (event) => {
-  const instructionsOverlay = document.getElementById('instructionsOverlay');
-  const showInstructionsButton = document.getElementById('showInstructions');
-  const closeInstructionsButton = document.getElementById('closeInstructions');
-
   showInstructionsButton.addEventListener('click', () => {
       instructionsOverlay.style.display = 'block';
   });
@@ -219,10 +222,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
 window.onload = () => {
   const data = getDataFromLocalStorage();
 
-  const positiveWeightElement = document.getElementById('positiveWeight');
-  const positivePromptCountElement = document.getElementById('positivePromptCount');
-  const negativePromptCountElement = document.getElementById('negativePromptCount');
-
   positiveWeightElement.value = data['positiveWeight'] || 60;
   positivePromptCountElement.value = data['positivePromptCount'] || 1;
   negativePromptCountElement.value = data['negativePromptCount'] || 1;
@@ -233,9 +232,8 @@ window.onload = () => {
   addPrompts('positive-prompts-container', 'positivePromptCount', 'positivePrompt');
   addPrompts('negative-prompts-container', 'negativePromptCount', 'negativePrompt');
   
-  document.getElementById('positiveWeight').addEventListener('input', calculateAndDisplay);
-    
-  const clearLocalStorageButton = document.getElementById('clearLocalStorage');
+  positiveWeightElement.addEventListener('input', calculateAndDisplay);
+  
   clearLocalStorageButton.addEventListener('click', () => {
     localStorage.removeItem(localStorageKey);
     location.reload();

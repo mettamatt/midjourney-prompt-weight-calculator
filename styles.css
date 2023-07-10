@@ -1,18 +1,18 @@
 /* Define root variables for easy customization and maintainability */
 :root {
   --border-light: 1px solid #ddd;
-  --margin-small: 0.5em;
-  --margin-large: 1em;
+  --margin-small: 0.5rem;
+  --margin-large: 1rem;
   --font-bold: 700;
-  --font-large: 1.5em;
+  --font-large: 1.5rem;
   --legend-background: #eee;
-  --legend-padding: 0.5em;
+  --legend-padding: 0.5rem;
   --legend-border: 1px solid #333;
-  --button-padding: 1em 2em;
+  --button-padding: 1rem 2rem;
   --result-font: 'Courier New', monospace;
 }
 
-/* Body styles */
+/* Global styles */
 body {
   font-family: Arial, sans-serif;
   margin: 0 auto;
@@ -20,14 +20,13 @@ body {
   max-width: 90%;
 }
 
-/* Media query for screens larger than 768px */
 @media screen and (min-width: 768px) {
   body {
     max-width: 750px;
   }
 }
 
-/* Inputs */
+/* Form elements */
 input[type="number"],
 input[type="text"] {
   margin: var(--margin-small) 0;
@@ -35,43 +34,43 @@ input[type="text"] {
 }
 
 input[type="text"] {
-  width: 8em;
+  width: 8rem;
 }
 
-/* Label and copy button */
 label,
 #copyToClipboard {
   display: block;
 }
 
-/* Section styles */
+/* Sections */
 section {
-  padding: 0.5em;
+  padding: 0.5rem;
   margin: var(--margin-large) 0;
   border: var(--border-light);
 }
 
-/* Legend styles */
+/* Legends */
 legend {
   font-size: var(--font-large);
   font-weight: var(--font-bold);
   background-color: var(--legend-background);
   padding: var(--legend-padding);
-  margin-bottom: 0.25em;
+  margin-bottom: 0.25rem;
   border: var(--legend-border);
 }
 
+/* Credits */
 .credit {
   text-align: right;
 }
 
-/* List items */
+/* Lists */
 ol li {
   line-height: 1.6;
-  margin-bottom: 1em;
+  margin-bottom: 1rem;
 }
 
-/* Input group styles */
+/* Input groups */
 .input-group {
   display: flex;
   align-items: center;
@@ -83,23 +82,47 @@ ol li {
   white-space: nowrap;
 }
 
-/* Copy to clipboard button styles */
+/* Buttons */
+button {
+  padding: var(--button-padding);
+}
+
+#showInstructions,
 #copyToClipboard {
+  background-color: #004ba0;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
   display: block;
-  margin: auto;
+  font-size: 16px;
+  margin: 4px auto;
+  cursor: pointer;
 }
 
-/* Result group styles */
-.result-group {
-  font-family: var(--result-font);
-  font-weight: var(--font-bold);
+#closeInstructions,
+#clearLocalStorage {
+  background-color: #bf360c;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }
 
-/* Result input styles */
+/* Results */
+.result-group,
 .result-input {
   font-family: var(--result-font);
   font-weight: var(--font-bold);
-  font-size: 0.9rem; 
+}
+
+.result-input {
+  font-size: 0.9rem;
 }
 
 #result {
@@ -108,18 +131,7 @@ ol li {
   width: 100%;
 }
 
-/* Button styles */
-button {
-  padding: var(--button-padding);
-}
-
-/* Flash animation */
-.flash {
-  animation: flash 1s;
-  background-color: transparent;
-}
-
-/* Toast styles */
+/* Toast messages */
 #toast {
   visibility: hidden;
   min-width: 15.625em;
@@ -149,29 +161,19 @@ button {
   transition: opacity 0.5s, visibility 0.5s;
 }
 
-/* Flash keyframes */
+/* Animations */
 @keyframes flash {
   0% {background-color: transparent;}
   50% {background-color: yellow;}
   100% {background-color: transparent;}
 }
 
-/* Button styling for 'Show Instructions' and 'Copy' */
-#showInstructions,
-#copyToClipboard {
-  background-color: #1976D2;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: block; 
-  font-size: 16px;
-  margin: 4px auto;
-  cursor: pointer;
+.flash {
+  animation: flash 1s;
+  background-color: transparent;
 }
 
-/* The overlay */
+/* Overlays */
 .overlay {
   position: fixed;
   display: none;
@@ -186,7 +188,6 @@ button {
   height: 100%;
 }
 
-/* The overlay content */
 .overlay-content {
   position: relative;
   top: 25%;
@@ -197,18 +198,4 @@ button {
   z-index: 5;
   width: 80%;
   max-width: 800px;
-}
-
-/* The close button */
-#closeInstructions,
-#clearLocalStorage {
-  background-color: #FF7043;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
 }
