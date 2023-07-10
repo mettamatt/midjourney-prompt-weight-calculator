@@ -5,10 +5,9 @@
   --margin-large: 1em;
   --font-bold: 700;
   --font-large: 1.5em;
-  --legend-background: #ddd;
+  --legend-background: #eee;
   --legend-padding: 0.5em;
   --legend-border: 1px solid #333;
-  --input-width: 2rem;
   --button-padding: 1em 2em;
   --result-font: 'Courier New', monospace;
 }
@@ -17,15 +16,22 @@
 body {
   font-family: Arial, sans-serif;
   margin: 0 auto;
-  max-width: 50em;
   padding: var(--margin-large);
+  max-width: 90%;
+}
+
+/* Media query for screens larger than 768px */
+@media screen and (min-width: 768px) {
+  body {
+    max-width: 750px;
+  }
 }
 
 /* Inputs */
 input[type="number"],
 input[type="text"] {
   margin: var(--margin-small) 0;
-  width: var(--input-width);
+  width: 100%;
 }
 
 input[type="text"] {
@@ -40,7 +46,7 @@ label,
 
 /* Section styles */
 section {
-  padding: 1em;
+  padding: 0.5em;
   margin: var(--margin-large) 0;
   border: var(--border-light);
 }
@@ -51,7 +57,18 @@ legend {
   font-weight: var(--font-bold);
   background-color: var(--legend-background);
   padding: var(--legend-padding);
+  margin-bottom: 0.25em;
   border: var(--legend-border);
+}
+
+.credit {
+  text-align: right;
+}
+
+/* List items */
+ol li {
+  line-height: 1.6;
+  margin-bottom: 1em;
 }
 
 /* Input group styles */
@@ -63,6 +80,7 @@ legend {
 
 .input-group label {
   margin-right: var(--margin-small);
+  white-space: nowrap;
 }
 
 /* Copy to clipboard button styles */
@@ -105,8 +123,6 @@ button {
 #toast {
   visibility: hidden;
   min-width: 15.625em;
-  max-width: 90%;
-  min-width: 15.625em;
   background-color: #333;
   color: #fff;
   text-align: center;
@@ -143,7 +159,7 @@ button {
 /* Button styling for 'Show Instructions' and 'Copy' */
 #showInstructions,
 #copyToClipboard {
-  background-color: #4CAF50; /* Green */
+  background-color: #1976D2;
   border: none;
   color: white;
   padding: 15px 32px;
@@ -157,36 +173,36 @@ button {
 
 /* The overlay */
 .overlay {
-  position: fixed; /* Fixed/sticky position */
-  display: none; /* Hidden by default */
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
+  position: fixed;
+  display: none;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  cursor: pointer;
   top: 0; 
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  width: 100%;
+  height: 100%;
 }
 
 /* The overlay content */
 .overlay-content {
   position: relative;
   top: 25%;
-  width: 80%; /* Specify a width */
-  margin: 0 auto; /* Center the content */
-  max-width: 800px; /* Maximum width */
+  margin: 0 auto;
   padding: 20px;
   background-color: white;
   box-shadow: 0 5px 15px rgba(0,0,0,0.5);
   z-index: 5;
+  width: 80%;
+  max-width: 800px;
 }
 
 /* The close button */
 #closeInstructions,
 #clearLocalStorage {
-  background-color: #ff6347; /* Red */
+  background-color: #FF7043;
   color: white;
   padding: 10px 20px;
   border: none;
