@@ -207,6 +207,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
           instructionsOverlay.style.display = 'none';
       }
   });
+
+  document.addEventListener('keydown', (event) => {
+      const keyCode = event.key || event.which;
+      if (keyCode === 'Escape' && instructionsOverlay.style.display === 'block') {
+          instructionsOverlay.style.display = 'none';
+      }
+  });
 });
 
 window.onload = () => {
