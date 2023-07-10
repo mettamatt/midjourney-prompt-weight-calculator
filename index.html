@@ -2,147 +2,25 @@
 <html lang="en">
   <head>
     <title>Weight Calculation</title>
-    <style>
-      :root {
-        --border-light: 1px solid #ddd;
-        --margin-small: 0.5em;
-        --margin-large: 1em;
-        --font-bold: 700;
-        --font-large: 1.5em;
-        --legend-background: #ddd;
-        --legend-padding: 0.5em;
-        --legend-border: 1px solid #333;
-        --input-width: 2rem;
-        --button-padding: 1em 2em;
-        --result-font: 'Courier New', monospace;
-      }
-
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0 auto;
-        max-width: 50em;
-        padding: var(--margin-large);
-      }
-
-      input[type="number"],
-      input[type="text"],
-      #negativeWeightValue {
-        margin: var(--margin-small) 0;
-        width: var(--input-width);
-      }
-
-      input[type="text"] {
-        width: 6.25em;
-      }
-
-      label,
-      #copyToClipboard {
-        display: block;
-      }
-
-      section {
-        padding: 1em;
-        margin: var(--margin-large) 0;
-        border: var(--border-light);
-      }
-
-      legend {
-        font-size: var(--font-large);
-        font-weight: var(--font-bold);
-        background-color: var(--legend-background);
-        padding: var(--legend-padding);
-        border: var(--legend-border);
-      }
-
-      .input-group {
-        display: flex;
-        align-items: center;
-        margin-bottom: var(--margin-small);
-      }
-
-      .input-group button {
-        display: block;
-        margin: auto;
-      }
-
-      .input-group label {
-        margin-right: var(--margin-small);
-      }
-      
-      .result-group {
-        font-family: var(--result-font);
-        font-weight: var(--font-bold);
-      }
-
-      .result-input {
-        font-family: var(--result-font);
-        font-weight: var(--font-bold);
-        font-size: 0.9rem; 
-      }
-
-      #result {
-        box-sizing: border-box;
-        margin: var(--margin-small) 0;
-        width: 100%;
-      }
-
-      button {
-        padding: var(--button-padding);
-      }
-
-      .flash {
-        animation: flash 1s;
-        background-color: transparent;
-      }
-
-      #toast {
-        visibility: hidden;
-        min-width: 15.625em;
-        margin-left: -7.8125em;
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        border-radius: 0.125em;
-        padding: 1em;
-        position: fixed;
-        z-index: 1;
-        left: 50%;
-        bottom: 1.875em;
-        font-size: 1.0625em;
-        opacity: 0;
-        transition: opacity 0.5s, visibility 0.5s;
-      }
-
-      #toast.show {
-        visibility: visible;
-        opacity: 1;
-        transition: opacity 0.5s, visibility 0.5s;
-      }
-
-      @keyframes flash {
-        0% {background-color: transparent;}
-        50% {background-color: yellow;}
-        100% {background-color: transparent;}
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <h1>Weight Calculation</h1>
     <section>
       <legend>Global Weights</legend>
       <div class="input-group">
-        <label for="positiveWeight">Positive Weight:</label>
+        <label class="input-group__label" for="positiveWeight">Positive Weight:</label>
         <input type="number" id="positiveWeight" value="60" min="0" max="100"><span>%</span>
       </div>
       <div class="input-group">
-        <label for="negativeWeightValue">Negative Weight:</label>
-        <input type="text" id="negativeWeightValue" readonly><span>%</span>
+        <label class="input-group__label" for="negativeWeightValue">Negative Weight:</label>
+        <input type="number" id="negativeWeightValue" readonly><span>%</span>
       </div>
     </section>
     <section>
       <legend>Results</legend>
       <div class="input-group result-group">
-        <label for="result">/imagine</label>
+        <label class="input-group__label" for="result">/imagine</label>
         <input type="text" id="result" class="result-input" readonly>
       </div>
       <div class="input-group">
@@ -152,7 +30,7 @@
     <section>
       <legend>Positive Prompt</legend>
       <div class="input-group">
-        <label for="positivePromptCount">Number of Positive Prompts:</label>
+        <label class="input-group__label" for="positivePromptCount">Number of Positive Prompts:</label>
         <input type="number" id="positivePromptCount" min="0" max="9" value="1">
       </div>
       <div id="positive-prompts-container"></div>
@@ -160,7 +38,7 @@
     <section>
       <legend>Negative Prompt</legend>
       <div class="input-group">
-        <label for="negativePromptCount">Number of Negative Prompts:</label>
+        <label class="input-group__label" for="negativePromptCount">Number of Negative Prompts:</label>
         <input type="number" id="negativePromptCount" min="0" max="9" value="1">
       </div>
       <div id="negative-prompts-container"></div>
@@ -168,217 +46,6 @@
     <button id="clearLocalStorage">Clear Local Storage</button>
     <div id="toast"></div>
 
-    <script type="text/javascript">
-      const localStorageKey = 'weightCalculationData';
-      const negativeWeightValueElement = document.getElementById('negativeWeightValue');
-      const resultElement = document.getElementById('result');
-
-      const getDataFromLocalStorage = () => {
-        return JSON.parse(localStorage.getItem(localStorageKey)) || {};
-      };
-
-      const setDataToLocalStorage = (data) => {
-        console.log(data);
-        localStorage.setItem(localStorageKey, JSON.stringify(data));
-      };
-    
-      const calculateWeights = (positiveWeight = 60, negativeWeight = 100 - positiveWeight, positivePrompts = [], negativePrompts = []) => {
-        let positivePromptCount = positivePrompts.filter(prompt => prompt.trim() !== "").length;
-        let negativePromptCount = negativePrompts.filter(prompt => prompt.trim() !== "").length;
-
-        let positivePromptWeight = positivePromptCount ? positiveWeight / positivePromptCount : 0;
-        let negativePromptWeight = negativePromptCount ? negativeWeight / negativePromptCount : 0;
-      
-        let finalPrompt = '';
-
-        positivePrompts.forEach(prompt => {
-          if (prompt.trim() !== "") {
-            finalPrompt += `${prompt}::${formatNumber(positivePromptWeight)} `;
-          }
-        });
-
-        negativePrompts.forEach(prompt => {
-          if (prompt.trim() !== "") {
-            finalPrompt += `${prompt}::-${formatNumber(negativePromptWeight)} `;
-          }
-        });
-
-        return finalPrompt.trim();
-      }
-
-      const formatNumber = (num) => Number.isInteger(num) ? num : num.toFixed(2);
-
-      const getPositiveWeight = () => {
-        const positiveWeightElement = document.getElementById('positiveWeight');
-        let positiveWeight = parseInt(positiveWeightElement.value) || 0;
-        positiveWeight = Math.min(Math.max(positiveWeight, 0), 100);
-        positiveWeightElement.value = positiveWeight;
-        return positiveWeight;
-      }
-
-      const updateNegativeWeight = (negativeWeight) => {
-        negativeWeightValueElement.value = `${negativeWeight}`;
-      }
-
-      const validateTotalWeight = (negativeWeight) => {
-        if (negativeWeight < 0) {
-          alert("Total weight cannot be negative. Please adjust your positive weight.");
-          return;
-        }
-      }
-
-      const calculateFinalPrompt = (positiveWeight, negativeWeight, positivePrompts, negativePrompts) => {
-        if (positivePrompts.length > 0 || negativePrompts.length > 0) {
-          let finalPrompt = calculateWeights(positiveWeight, negativeWeight, positivePrompts, negativePrompts);
-          resultElement.value = `${finalPrompt}`;
-          resultElement.classList.add('flash');
-          setTimeout(() => resultElement.classList.remove('flash'), 1000);
-          negativeWeightValueElement.value = `${negativeWeight}`;
-        }
-      }
-
-      const getPrompts = (promptPrefix, promptCountId) => {
-        const promptCountElement = document.getElementById(promptCountId);
-        let promptCount = Math.min(parseInt(promptCountElement.value) || 0, 10);
-        let prompts = [];
-
-        for (let i = 1; i <= promptCount; i++) {
-          const promptInput = document.getElementById(`${promptPrefix}${i}`);
-          if (promptInput) {
-            const promptText = promptInput.value;
-            prompts.push(promptText);
-          }
-        }
-
-        return prompts;
-      }
-
-      const calculateAndDisplay = () => {
-        const positiveWeight = getPositiveWeight();
-
-        const negativeWeight = 100 - positiveWeight;
-        updateNegativeWeight(negativeWeight);
-
-        validateTotalWeight(negativeWeight);
-
-        const positivePrompts = getPrompts('positivePrompt', 'positivePromptCount');
-        const negativePrompts = getPrompts('negativePrompt', 'negativePromptCount');
-
-        calculateFinalPrompt(positiveWeight, negativeWeight, positivePrompts, negativePrompts);
-      }
-
-      const addPrompts = (containerId, promptCountId, promptPrefix) => {
-        const countElement = document.getElementById(promptCountId);
-        let count = Math.min(Number(countElement.value) || 0, 9);
-        const container = document.getElementById(containerId);
-
-        let data = getDataFromLocalStorage(); 
-
-        while (container.firstChild) {
-          container.firstChild.remove();
-        }
-
-        for (let i = 1; i <= count; i++) {
-          addPrompt(i, promptPrefix, container, data, count);
-        }
-
-        calculateAndDisplay();
-      };
-
-      const addPrompt = (index, promptPrefix, container, data, count) => {
-        const prompt = document.createElement('input');
-        prompt.id = `${promptPrefix}${index}`;
-        prompt.value = data[prompt.id] || "";
-        prompt.classList.add('prompt-input');
-        prompt.type = 'text';
-        prompt.placeholder = `Prompt ${index}`;
-
-        prompt.addEventListener('input', () => {
-          calculateAndDisplay();
-
-          data[prompt.id] = prompt.value;
-          setDataToLocalStorage(data);
-        });
-
-        const separator = document.createElement('span');
-        separator.textContent = '::';
-
-        container.appendChild(prompt);
-  
-        if(count > 1 && index !== count) {
-          container.appendChild(separator);
-        }
-      };
-      
-      const showToast = message => {
-        const toast = document.getElementById("toast");
-        toast.textContent = message;
-        toast.classList.add("show");
-
-        setTimeout(() => { 
-          toast.classList.remove("show");
-        }, 3000);
-      }      
-
-      const attachPromptCountListener = (promptCountId, containerId, promptPrefix) => {
-        const promptCountElement = document.getElementById(promptCountId);
-        promptCountElement.addEventListener('change', () => {
-          const data = getDataFromLocalStorage();
-          data[promptCountId] = Number(promptCountElement.value);
-          setDataToLocalStorage(data);
-
-          addPrompts(containerId, promptCountId, promptPrefix);
-        });
-      }
-
-      document.getElementById('positiveWeight').addEventListener('input', () => {
-        const positiveWeight = getPositiveWeight();
-        const negativeWeight = 100 - positiveWeight;
-        updateNegativeWeight(negativeWeight);
-      });
-
-      attachPromptCountListener('positivePromptCount', 'positive-prompts-container', 'positivePrompt');
-      attachPromptCountListener('negativePromptCount', 'negative-prompts-container', 'negativePrompt');
-
-      document.getElementById('positiveWeight').addEventListener('input', calculateAndDisplay);
-
-      const clearLocalStorageButton = document.getElementById('clearLocalStorage');
-      clearLocalStorageButton.addEventListener('click', () => {
-        localStorage.removeItem(localStorageKey);
-        location.reload();
-      });
-      
-      document.getElementById('copyToClipboard').addEventListener('click', function() {
-        let finalPromptText = document.getElementById('result').value;
-
-        let tempInput = document.createElement('input');
-        tempInput.value = finalPromptText;
-        document.body.appendChild(tempInput);
-
-        tempInput.select();
-        document.execCommand('copy');
-
-        document.body.removeChild(tempInput);
-
-        showToast("Copied to clipboard!");
-      });
-    
-      
-      window.addEventListener('load', () => {
-        const data = getDataFromLocalStorage();
-
-        document.getElementById('positivePromptCount').value = data['positivePromptCount'] || 1;
-        document.getElementById('negativePromptCount').value = data['negativePromptCount'] || 1;
-
-        if (data['positiveWeight'] !== undefined) {
-          document.getElementById('positiveWeight').value = data['positiveWeight'];
-          updateNegativeWeight(100 - data['positiveWeight']);
-        }
-
-        addPrompts('positive-prompts-container', 'positivePromptCount', 'positivePrompt');
-        addPrompts('negative-prompts-container', 'negativePromptCount', 'negativePrompt');
-        calculateAndDisplay();
-      });
-    </script>
+    <script src="main.js"></script>
   </body>
 </html>

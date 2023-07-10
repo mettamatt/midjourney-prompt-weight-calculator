@@ -1,0 +1,141 @@
+/* Define root variables for easy customization and maintainability */
+:root {
+  --border-light: 1px solid #ddd;
+  --margin-small: 0.5em;
+  --margin-large: 1em;
+  --font-bold: 700;
+  --font-large: 1.5em;
+  --legend-background: #ddd;
+  --legend-padding: 0.5em;
+  --legend-border: 1px solid #333;
+  --input-width: 2rem;
+  --button-padding: 1em 2em;
+  --result-font: 'Courier New', monospace;
+}
+
+/* Body styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0 auto;
+  max-width: 50em;
+  padding: var(--margin-large);
+}
+
+/* Inputs */
+input[type="number"],
+input[type="text"] {
+  margin: var(--margin-small) 0;
+  width: var(--input-width);
+}
+
+input[type="text"] {
+  width: 8em;
+}
+
+/* Label and copy button */
+label,
+#copyToClipboard {
+  display: block;
+}
+
+/* Section styles */
+section {
+  padding: 1em;
+  margin: var(--margin-large) 0;
+  border: var(--border-light);
+}
+
+/* Legend styles */
+legend {
+  font-size: var(--font-large);
+  font-weight: var(--font-bold);
+  background-color: var(--legend-background);
+  padding: var(--legend-padding);
+  border: var(--legend-border);
+}
+
+/* Input group styles */
+.input-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--margin-small);
+}
+
+.input-group label {
+  margin-right: var(--margin-small);
+}
+
+/* Copy to clipboard button styles */
+#copyToClipboard {
+  display: block;
+  margin: auto;
+}
+
+/* Result group styles */
+.result-group {
+  font-family: var(--result-font);
+  font-weight: var(--font-bold);
+}
+
+/* Result input styles */
+.result-input {
+  font-family: var(--result-font);
+  font-weight: var(--font-bold);
+  font-size: 0.9rem; 
+}
+
+#result {
+  box-sizing: border-box;
+  margin: var(--margin-small) 0;
+  width: 100%;
+}
+
+/* Button styles */
+button {
+  padding: var(--button-padding);
+}
+
+/* Flash animation */
+.flash {
+  animation: flash 1s;
+  background-color: transparent;
+}
+
+/* Toast styles */
+#toast {
+  visibility: hidden;
+  min-width: 15.625em;
+  max-width: 90%;
+  min-width: 15.625em;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 0.125em;
+  padding: 1em;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 1.875em;
+  font-size: 1.0625em;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0.5s;
+  transform: translateX(-50%);
+}
+
+#toast a {
+  color: #b3b3b3;
+  text-decoration: underline;
+}
+
+#toast.show {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+
+/* Flash keyframes */
+@keyframes flash {
+  0% {background-color: transparent;}
+  50% {background-color: yellow;}
+  100% {background-color: transparent;}
+}
