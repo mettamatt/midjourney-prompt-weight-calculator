@@ -7,6 +7,9 @@ With the help of this calculator, you can create prompts that have a more balanc
 ## Demo
 <p><a href="https://mettamatt.github.io/midjourney-prompt-weight-calculator/">https://mettamatt.github.io/midjourney-prompt-weight-calculator/</a></p>
 
+## Screenshot
+![Screenshot](screenshot.png)
+
 ## Background
 
 Midjourney generates artwork based on user-provided prompts. While you can use simple prompts to generate images, for more control over the generated image, you may want to use multi-prompts. 
