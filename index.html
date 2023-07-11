@@ -34,7 +34,7 @@
     <legend>Global Weights</legend>
     <div class="input-group">
       <label class="input-group__label" for="positiveWeight">Positive Weight:</label>
-      <input type="number" id="positiveWeight" value="60" min="0" max="100"><span>%</span>
+      <input type="range" id="positiveWeight" value="60" min="51" max="100"><span id="positiveWeightValue">60</span><span>%</span>
     </div>
     <div class="input-group">
       <label class="input-group__label" for="negativeWeightValue">Negative Weight:</label>
@@ -62,8 +62,10 @@
   <section>
     <legend>Positive Prompts</legend>
     <div class="input-group">
-      <label class="input-group__label" for="positivePromptCount">Count:</label>
-      <input type="number" id="positivePromptCount" min="0" max="9" value="1">
+        <label class="input-group__label" for="positivePromptCount">Count:</label>
+        <button id="positivePromptDecrement" type="button"></button>
+        <input type="text" id="positivePromptCount" value="1" readonly>
+        <button id="positivePromptIncrement" type="button"></button>
     </div>
     <div id="positive-prompts-container"></div>
     <p>
@@ -73,8 +75,10 @@
   <section>
     <legend>Negative Prompts</legend>
     <div class="input-group">
-      <label class="input-group__label" for="negativePromptCount">Count:</label>
-      <input type="number" id="negativePromptCount" min="0" max="9" value="1">
+        <label class="input-group__label" for="negativePromptCount">Count:</label>
+        <button id="negativePromptDecrement" type="button"></button>
+        <input type="text" id="negativePromptCount" value="1" readonly>
+        <button id="negativePromptIncrement" type="button"></button>
     </div>
     <div id="negative-prompts-container"></div>
     <p>
