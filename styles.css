@@ -296,7 +296,8 @@ button:active {
 .overlay-content {
   position: relative;
   overflow: auto;
-  top: 25%;
+  top: 5%;
+  height: 90%;
   margin: 0 auto;
   padding: 20px;
   background-color: white;
