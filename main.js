@@ -198,7 +198,7 @@ const addPrompt = (index, promptPrefix, container, count) => {
     calculateAndDisplay();
 
     let data = getDataFromLocalStorage();
-    data[prompt.id] = prompt.value;
+    data[prompt.id] = prompt.value.trim();
     setDataToLocalStorage(data);
   });
 
