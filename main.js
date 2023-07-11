@@ -65,7 +65,7 @@ const calculateWeights = (
 
   positivePrompts.forEach((prompt) => {
     if (prompt.trim() !== "") {
-      finalPrompt += `${prompt}::${formatNumber(positivePromptWeight)} `;
+      finalPrompt += `${prompt.trim()}::${formatNumber(positivePromptWeight)} `;
     }
   });
 
