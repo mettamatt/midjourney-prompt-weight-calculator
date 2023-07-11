@@ -9,7 +9,11 @@
   --legend-padding: 0.5rem;
   --legend-border: 1px solid #333;
   --button-padding: 1rem 2rem;
-  --result-font: 'Courier New', monospace;
+  --result-font: "Courier New", monospace;
+  --background-color-primary: #004ba0;
+  --background-color-primary-hover: #003b80;
+  --background-color-secondary: #bf360c;
+  --background-color-secondary-hover: #9f2d07;
 }
 
 /* Global styles */
@@ -20,15 +24,16 @@ body {
   max-width: 90%;
 }
 
+/* Media queries */
 @media screen and (max-width: 768px) {
   body {
     padding: var(--margin-small);
   }
-  
+
   section {
     margin: var(--margin-small) 0;
   }
-  
+
   html {
     font-size: 18px;
   }
@@ -41,19 +46,17 @@ body {
 }
 
 /* Form elements */
-input[type="number"],
-input[type="text"] {
-  margin: var(--margin-small) 0;
-  width: 100%;
-}
-
-input[type="text"] {
-  width: 8rem;
-}
-
 label,
 #copyToClipboard {
   display: block;
+}
+
+/* Count Display */
+#positivePromptCount,
+#negativePromptCount {
+  margin: 0 var(--margin-small);
+  width: 2rem;
+  text-align: center;
 }
 
 /* Sections */
@@ -120,8 +123,10 @@ button:active {
 }
 
 #showInstructions,
-#copyToClipboard {
-  background-color: #004ba0;
+#copyToClipboard,
+#closeInstructions,
+#clearLocalStorage {
+  background-color: var(--background-color-primary);
   border: none;
   color: white;
   padding: 15px 32px;
@@ -134,13 +139,15 @@ button:active {
 }
 
 #showInstructions:hover,
-#copyToClipboard:hover {
-  background-color: #003b80;
+#copyToClipboard:hover,
+#closeInstructions:hover,
+#clearLocalStorage:hover {
+  background-color: var(--background-color-primary-hover);
 }
 
 #closeInstructions,
 #clearLocalStorage {
-  background-color: #bf360c;
+  background-color: var(--background-color-secondary);
   color: white;
   padding: 10px 20px;
   border: none;
@@ -153,10 +160,9 @@ button:active {
 
 #closeInstructions:hover,
 #clearLocalStorage:hover {
-  background-color: #9f2d07;
+  background-color: var(--background-color-secondary-hover);
 }
 
-/* Increment/Decrement buttons */
 /* Increment/Decrement buttons */
 #positivePromptIncrement,
 #positivePromptDecrement,
@@ -235,7 +241,9 @@ button:active {
   bottom: 1.875em;
   font-size: 1.0625em;
   opacity: 0;
-  transition: opacity 0.5s, visibility 0.5s;
+  transition:
+    opacity 0.5s,
+    visibility 0.5s;
   transform: translateX(-50%);
 }
 
@@ -247,14 +255,22 @@ button:active {
 #toast.show {
   visibility: visible;
   opacity: 1;
-  transition: opacity 0.5s, visibility 0.5s;
+  transition:
+    opacity 0.5s,
+    visibility 0.5s;
 }
 
 /* Animations */
 @keyframes flash {
-  0% {background-color: transparent;}
-  50% {background-color: yellow;}
-  100% {background-color: transparent;}
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: yellow;
+  }
+  100% {
+    background-color: transparent;
+  }
 }
 
 .flash {
@@ -266,10 +282,10 @@ button:active {
 .overlay {
   position: fixed;
   display: none;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 2;
   cursor: pointer;
-  top: 0; 
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -283,8 +299,25 @@ button:active {
   margin: 0 auto;
   padding: 20px;
   background-color: white;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   z-index: 5;
   width: 80%;
-  max-width: 800px;
+  max-width: 600px;
+}
+
+.overlay-content h2 {
+  margin: 0;
+  margin-bottom: 1rem;
+}
+
+.overlay-content ol {
+  margin-top: 0;
+}
+
+.overlay-content p {
+  margin-bottom: 1rem;
+}
+
+.overlay-close {
+  text-align: right;
 }
