@@ -1,76 +1,127 @@
-const localStorageKey = 'weightCalculationData';
+const element = (id) => document.getElementById(id);
+const elements = [
+  "positiveWeight",
+  "positiveWeightValue",
+  "negativeWeightValue",
+  "result",
+  "instructionsOverlay",
+  "showInstructions",
+  "closeInstructions",
+  "positivePromptCount",
+  "negativePromptCount",
+  "clearLocalStorage",
+  "positivePromptIncrement",
+  "positivePromptDecrement",
+  "negativePromptIncrement",
+  "negativePromptDecrement",
+  "copyToClipboard",
+  "toast",
+].reduce((acc, id) => ({ ...acc, [id]: element(id) }), {});
 
-// Store DOM elements in variables for reuse
-const positiveWeightElement = document.getElementById('positiveWeight');
-const negativeWeightValueElement = document.getElementById('negativeWeightValue');
-const resultElement = document.getElementById('result');
-const instructionsOverlay = document.getElementById('instructionsOverlay');
-const showInstructionsButton = document.getElementById('showInstructions');
-const closeInstructionsButton = document.getElementById('closeInstructions');
-const positivePromptCountElement = document.getElementById('positivePromptCount');
-const negativePromptCountElement = document.getElementById('negativePromptCount');
-const clearLocalStorageButton = document.getElementById('clearLocalStorage');
+const localStorageKey = "weightCalculationData";
+const copyButton = elements.copyToClipboard;
 
-const getDataFromLocalStorage = () => {
-  return JSON.parse(localStorage.getItem(localStorageKey)) || {};
-};
-
-const setDataToLocalStorage = (data) => {
+const getDataFromLocalStorage = () =>
+  JSON.parse(localStorage.getItem(localStorageKey)) || {};
+const setDataToLocalStorage = (data) =>
   localStorage.setItem(localStorageKey, JSON.stringify(data));
-};
 
-const calculateWeights = (positiveWeight = 60, negativeWeight = 100 - positiveWeight, positivePrompts = [], negativePrompts = []) => {
-  const positivePromptCount = positivePrompts.filter(prompt => prompt.trim() !== "").length;
-  const negativePromptCount = negativePrompts.filter(prompt => prompt.trim() !== "").length;
+const calculateWeights = (
+  positiveWeight = 60,
+  negativeWeight = 100 - positiveWeight,
+  positivePrompts = [],
+  negativePrompts = [],
+) => {
+  if (
+    typeof positiveWeight !== "number" ||
+    typeof negativeWeight !== "number" ||
+    positiveWeight < 0 ||
+    negativeWeight < 0
+  ) {
+    console.error("Invalid weights provided");
+    return;
+  }
 
-  const positivePromptWeight = positivePromptCount ? positiveWeight / positivePromptCount : 0;
-  const negativePromptWeight = negativePromptCount ? negativeWeight / negativePromptCount : 0;
+  if (!Array.isArray(positivePrompts) || !Array.isArray(negativePrompts)) {
+    console.error("Prompts must be arrays");
+    return;
+  }
 
-  let finalPrompt = '';
+  const positivePromptCount = positivePrompts.filter(
+    (prompt) => prompt.trim() !== "",
+  ).length;
+  const negativePromptCount = negativePrompts.filter(
+    (prompt) => prompt.trim() !== "",
+  ).length;
 
-  positivePrompts.forEach(prompt => {
+  const positivePromptWeight = positivePromptCount
+    ? positiveWeight / positivePromptCount
+    : 0;
+  const negativePromptWeight = negativePromptCount
+    ? negativeWeight / negativePromptCount
+    : 0;
+
+  let finalPrompt = "";
+
+  positivePrompts.forEach((prompt) => {
     if (prompt.trim() !== "") {
       finalPrompt += `${prompt}::${formatNumber(positivePromptWeight)} `;
     }
   });
 
-  negativePrompts.forEach(prompt => {
+  negativePrompts.forEach((prompt) => {
     if (prompt.trim() !== "") {
       finalPrompt += `${prompt}::-${formatNumber(negativePromptWeight)} `;
     }
   });
 
   return finalPrompt.trim();
-}
+};
 
-const formatNumber = (num) => Number.isInteger(num) ? num : num.toFixed(2);
+const formatNumber = (num) => (Number.isInteger(num) ? num : num.toFixed(2));
 
 const getPositiveWeight = () => {
-  const positiveWeight = parseInt(positiveWeightElement.value) || 0;
+  let positiveWeight = parseInt(elements.positiveWeight.value) || 0;
+  if (positiveWeight > 100) {
+    positiveWeight = 100;
+    showToast("Positive weight cannot be more than 100.");
+  }
   return positiveWeight;
-}
+};
 
 const updateNegativeWeight = (negativeWeight) => {
-  negativeWeightValueElement.value = `${negativeWeight}`;
-}
+  elements.negativeWeightValue.value = `${negativeWeight}`;
+};
 
 const validateTotalWeight = (negativeWeight) => {
   if (negativeWeight < 0) {
-    showToast("Total weight cannot be negative. Please adjust your positive weight.");
+    showToast(
+      "Total weight cannot be negative. Please adjust your positive weight.",
+    );
     return false;
   }
   return true;
-}
+};
 
-const calculateFinalPrompt = (positiveWeight, negativeWeight, positivePrompts, negativePrompts) => {
+const calculateFinalPrompt = (
+  positiveWeight,
+  negativeWeight,
+  positivePrompts,
+  negativePrompts,
+) => {
   if (positivePrompts.length > 0 || negativePrompts.length > 0) {
-    const finalPrompt = calculateWeights(positiveWeight, negativeWeight, positivePrompts, negativePrompts);
-    resultElement.value = `${finalPrompt}`;
-    resultElement.classList.add('flash');
-    setTimeout(() => resultElement.classList.remove('flash'), 1000);
-    negativeWeightValueElement.value = `${negativeWeight}`;
+    const finalPrompt = calculateWeights(
+      positiveWeight,
+      negativeWeight,
+      positivePrompts,
+      negativePrompts,
+    );
+    elements.result.value = `${finalPrompt}`;
+    elements.result.classList.add("flash");
+    setTimeout(() => elements.result.classList.remove("flash"), 1000);
+    elements.negativeWeightValue.value = `${negativeWeight}`;
   }
-}
+};
 
 const getPrompts = (promptPrefix, promptCountId) => {
   const promptCountElement = document.getElementById(promptCountId);
@@ -86,10 +137,11 @@ const getPrompts = (promptPrefix, promptCountId) => {
   }
 
   return prompts;
-}
+};
 
 const calculateAndDisplay = () => {
   const positiveWeight = getPositiveWeight();
+  elements.positiveWeightValue.textContent = positiveWeight;
 
   const negativeWeight = 100 - positiveWeight;
 
@@ -99,25 +151,33 @@ const calculateAndDisplay = () => {
 
   updateNegativeWeight(negativeWeight);
 
-  const positivePrompts = getPrompts('positivePrompt', 'positivePromptCount');
-  const negativePrompts = getPrompts('negativePrompt', 'negativePromptCount');
+  const positivePrompts = getPrompts("positivePrompt", "positivePromptCount");
+  const negativePrompts = getPrompts("negativePrompt", "negativePromptCount");
 
-  calculateFinalPrompt(positiveWeight, negativeWeight, positivePrompts, negativePrompts);
-}
+  calculateFinalPrompt(
+    positiveWeight,
+    negativeWeight,
+    positivePrompts,
+    negativePrompts,
+  );
+};
 
 const addPrompts = (containerId, promptCountId, promptPrefix) => {
-  const countElement = promptCountId === 'positivePromptCount' ? positivePromptCountElement : negativePromptCountElement;
+  const countElement =
+    promptCountId === "positivePromptCount"
+      ? elements.positivePromptCount
+      : elements.negativePromptCount;
   const count = Math.min(Number(countElement.value) || 0, 9);
   const container = document.getElementById(containerId);
 
-  const data = getDataFromLocalStorage(); 
+  const data = getDataFromLocalStorage();
 
   while (container.firstChild) {
     container.firstChild.remove();
   }
 
   for (let i = 1; i <= count; i++) {
-    addPrompt(i, promptPrefix, container, data, count);
+    addPrompt(i, promptPrefix, container, count);
     const promptInput = document.getElementById(`${promptPrefix}${i}`);
     if (promptInput) {
       promptInput.value = data[promptInput.id] || "";
@@ -128,13 +188,13 @@ const addPrompts = (containerId, promptCountId, promptPrefix) => {
 };
 
 const addPrompt = (index, promptPrefix, container, count) => {
-  const prompt = document.createElement('input');
+  const prompt = document.createElement("input");
   prompt.id = `${promptPrefix}${index}`;
-  prompt.classList.add('prompt-input');
-  prompt.type = 'text';
+  prompt.classList.add("prompt-input");
+  prompt.type = "text";
   prompt.placeholder = `Prompt ${index}`;
 
-  prompt.addEventListener('input', () => {
+  prompt.addEventListener("input", () => {
     calculateAndDisplay();
 
     let data = getDataFromLocalStorage();
@@ -142,134 +202,208 @@ const addPrompt = (index, promptPrefix, container, count) => {
     setDataToLocalStorage(data);
   });
 
-  const separator = document.createElement('span');
-  separator.textContent = '::';
+  const separator = document.createElement("span");
+  separator.textContent = "::";
 
   container.appendChild(prompt);
 
-  if(count > 1 && index !== count) {
+  if (count > 1 && index !== count) {
     container.appendChild(separator);
   }
 };
 
-const showToast = message => {
-  const currentScrollY = window.scrollY;
+copyButton.addEventListener("click", () => {
+  const finalPrompt = elements.result.value;
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(finalPrompt);
+    return;
+  }
+  navigator.clipboard.writeText(finalPrompt).then(
+    function () {
+      showToast("Copied to clipboard!");
+    },
+    function (err) {
+      console.error("Async: Could not copy text: ", err);
+      showToast("Failed to copy. Try again!");
+    },
+  );
+});
 
-  const toast = document.getElementById("toast");
-  toast.textContent = "";
-  toast.insertAdjacentHTML("afterbegin", message);
+const fallbackCopyTextToClipboard = (text) => {
+  var textArea = document.createElement("textarea");
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    var successful = document.execCommand("copy");
+    var msg = successful
+      ? "Copied to clipboard!"
+      : "Failed to copy. Try again!";
+    showToast(msg);
+  } catch (err) {
+    console.error("Fallback: Oops, unable to copy", err);
+    showToast("Failed to copy. Try again!");
+  }
+
+  document.body.removeChild(textArea);
+};
+
+const showToast = (message) => {
+  if (!message) return;
+  const toast = elements.toast;
+  toast.innerHTML = message;
   toast.classList.add("show");
-
-  window.scrollTo(0, currentScrollY);
-
-  setTimeout(() => { 
+  setTimeout(() => {
     toast.classList.remove("show");
-  }, 4000);
-}
+    setTimeout(() => {
+      toast.innerHTML = "";
+    }, 1000);
+  }, 5000);
+};
 
-const attachPromptCountListener = (promptCountId, containerId, promptPrefix) => {
+const attachPromptCountListener = (
+  promptCountId,
+  containerId,
+  promptPrefix,
+) => {
   const promptCountElement = document.getElementById(promptCountId);
-  promptCountElement.addEventListener('change', () => {
+  promptCountElement.addEventListener("change", () => {
     const data = getDataFromLocalStorage();
     data[promptCountId] = Number(promptCountElement.value);
     setDataToLocalStorage(data);
 
     addPrompts(containerId, promptCountId, promptPrefix);
   });
-}
+};
 
-document.getElementById('positiveWeight').addEventListener('input', () => {
-  const positiveWeightElement = document.getElementById('positiveWeight');
-
-  if (positiveWeightElement.value < 51) {
-    positiveWeightElement.value = 51;
-    showToast("<strong>Positive Weight</strong> must be 51% or higher so total prompt weight remains positive.<br>See the <a href='https://docs.midjourney.com/docs/multi-prompts#negative-prompt-weights' target='_blank'>Midjourney docs</a> for details.");
+elements.positivePromptIncrement.addEventListener("click", () => {
+  let currentValue = parseInt(elements.positivePromptCount.value);
+  if (currentValue < 9) {
+    // Max value is 9
+    elements.positivePromptCount.value = currentValue + 1;
+    // update local storage and refresh prompts
+    const data = getDataFromLocalStorage();
+    data["positivePromptCount"] = elements.positivePromptCount.value;
+    setDataToLocalStorage(data);
+    addPrompts(
+      "positive-prompts-container",
+      "positivePromptCount",
+      "positivePrompt",
+    );
   }
+});
+
+elements.positivePromptDecrement.addEventListener("click", () => {
+  let currentValue = parseInt(elements.positivePromptCount.value);
+  if (currentValue > 1) {
+    // Min value is 1
+    elements.positivePromptCount.value = currentValue - 1;
+    // update local storage and refresh prompts
+    const data = getDataFromLocalStorage();
+    data["positivePromptCount"] = elements.positivePromptCount.value;
+    setDataToLocalStorage(data);
+    addPrompts(
+      "positive-prompts-container",
+      "positivePromptCount",
+      "positivePrompt",
+    );
+  }
+});
+
+elements.negativePromptIncrement.addEventListener("click", () => {
+  let currentValue = parseInt(elements.negativePromptCount.value);
+  if (currentValue < 9) {
+    // Max value is 9
+    elements.negativePromptCount.value = currentValue + 1;
+    // update local storage and refresh prompts
+    const data = getDataFromLocalStorage();
+    data["negativePromptCount"] = elements.negativePromptCount.value;
+    setDataToLocalStorage(data);
+    addPrompts(
+      "negative-prompts-container",
+      "negativePromptCount",
+      "negativePrompt",
+    );
+  }
+});
+
+elements.negativePromptDecrement.addEventListener("click", () => {
+  let currentValue = parseInt(elements.negativePromptCount.value);
+  if (currentValue > 1) {
+    // Min value is 1
+    elements.negativePromptCount.value = currentValue - 1;
+    // update local storage and refresh prompts
+    const data = getDataFromLocalStorage();
+    data["negativePromptCount"] = elements.negativePromptCount.value;
+    setDataToLocalStorage(data);
+    addPrompts(
+      "negative-prompts-container",
+      "negativePromptCount",
+      "negativePrompt",
+    );
+  }
+});
+
+elements.positiveWeight.addEventListener("input", () => {
+  const positiveWeight = getPositiveWeight();
+  elements.positiveWeightValue.textContent = positiveWeight;
+
+  const negativeWeight = 100 - positiveWeight;
+  updateNegativeWeight(negativeWeight);
 
   const data = getDataFromLocalStorage();
-  data['positiveWeight'] = positiveWeightElement.value;
+  data["positiveWeight"] = positiveWeight;
   setDataToLocalStorage(data);
 
   calculateAndDisplay();
-
-  const negativeWeight = 100 - positiveWeightElement.value;
-  updateNegativeWeight(negativeWeight);
 });
 
-document.addEventListener('DOMContentLoaded', (event) => {
-  showInstructionsButton.addEventListener('click', () => {
-      instructionsOverlay.style.display = 'block';
-  });
-
-  closeInstructionsButton.addEventListener('click', () => {
-      instructionsOverlay.style.display = 'none';
-  });
-
-  window.addEventListener('click', (event) => {
-      if (event.target == instructionsOverlay) {
-          instructionsOverlay.style.display = 'none';
-      }
-  });
-
-  document.addEventListener('keydown', (event) => {
-      const keyCode = event.key || event.which;
-      if (keyCode === 'Escape' && instructionsOverlay.style.display === 'block') {
-          instructionsOverlay.style.display = 'none';
-      }
-  });
-});
-
-window.onload = () => {
+document.addEventListener("DOMContentLoaded", () => {
   const data = getDataFromLocalStorage();
 
-  positiveWeightElement.value = data['positiveWeight'] || 60;
-  positivePromptCountElement.value = data['positivePromptCount'] || 1;
-  negativePromptCountElement.value = data['negativePromptCount'] || 1;
+  elements.positiveWeight.value = data.positiveWeight || 60;
+  elements.positivePromptCount.value = data.positivePromptCount || 1;
+  elements.negativePromptCount.value = data.negativePromptCount || 1;
 
-  attachPromptCountListener('positivePromptCount', 'positive-prompts-container', 'positivePrompt');
-  attachPromptCountListener('negativePromptCount', 'negative-prompts-container', 'negativePrompt');
+  elements.showInstructions.addEventListener(
+    "click",
+    () => (elements.instructionsOverlay.style.display = "block"),
+  );
+  elements.closeInstructions.addEventListener(
+    "click",
+    () => (elements.instructionsOverlay.style.display = "none"),
+  );
 
-  addPrompts('positive-prompts-container', 'positivePromptCount', 'positivePrompt');
-  addPrompts('negative-prompts-container', 'negativePromptCount', 'negativePrompt');
-  
-  positiveWeightElement.addEventListener('input', calculateAndDisplay);
-  
-  clearLocalStorageButton.addEventListener('click', () => {
+  addPrompts(
+    "positive-prompts-container",
+    "positivePromptCount",
+    "positivePrompt",
+  );
+  addPrompts(
+    "negative-prompts-container",
+    "negativePromptCount",
+    "negativePrompt",
+  );
+
+  attachPromptCountListener(
+    "positivePromptCount",
+    "positive-prompts-container",
+    "positivePrompt",
+  );
+  attachPromptCountListener(
+    "negativePromptCount",
+    "negative-prompts-container",
+    "negativePrompt",
+  );
+
+  calculateAndDisplay();
+});
+
+window.addEventListener("load", () => {
+  elements.clearLocalStorage.addEventListener("click", () => {
     localStorage.removeItem(localStorageKey);
     location.reload();
   });
-
-  document.getElementById('copyToClipboard').addEventListener('click', function() {
-    let finalPromptText = document.getElementById('result').value;
-
-    if (navigator.clipboard) {
-      // Use the Clipboard API if available
-      navigator.clipboard.writeText(finalPromptText).then(function() {
-        showToast("Copied to clipboard!");
-      }, function(err) {
-        showToast("Could not copy to clipboard!");
-      });
-    } else if (window.clipboardData) {
-      // For Internet Explorer
-      window.clipboardData.setData('Text', finalPromptText);
-      showToast("Copied to clipboard!");
-    } else {
-      // Fallback for other browsers
-      var textArea = document.createElement("textarea");
-      textArea.value = finalPromptText;
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
-
-      try {
-        var successful = document.execCommand('copy');
-        showToast(successful ? "Copied to clipboard!" : "Could not copy to clipboard!");
-      } catch (err) {
-        showToast("Could not copy to clipboard!");
-      }
-
-      document.body.removeChild(textArea);
-    }
-  });
-  calculateAndDisplay();
-}
+});
