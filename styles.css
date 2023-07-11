@@ -20,6 +20,20 @@ body {
   max-width: 90%;
 }
 
+@media screen and (max-width: 768px) {
+  body {
+    padding: var(--margin-small);
+  }
+  
+  section {
+    margin: var(--margin-small) 0;
+  }
+  
+  html {
+    font-size: 18px;
+  }
+}
+
 @media screen and (min-width: 768px) {
   body {
     max-width: 750px;
@@ -82,9 +96,27 @@ ol li {
   white-space: nowrap;
 }
 
+.input-group__label[for="positiveWeight"] {
+  flex-grow: 1;
+}
+
+input[type="range"] {
+  flex-grow: 2;
+  margin-right: var(--margin-small);
+}
+
 /* Buttons */
 button {
   padding: var(--button-padding);
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  filter: brightness(1.1);
+}
+
+button:active {
+  filter: brightness(0.9);
 }
 
 #showInstructions,
@@ -101,6 +133,11 @@ button {
   cursor: pointer;
 }
 
+#showInstructions:hover,
+#copyToClipboard:hover {
+  background-color: #003b80;
+}
+
 #closeInstructions,
 #clearLocalStorage {
   background-color: #bf360c;
@@ -112,6 +149,58 @@ button {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+}
+
+#closeInstructions:hover,
+#clearLocalStorage:hover {
+  background-color: #9f2d07;
+}
+
+/* Increment/Decrement buttons */
+/* Increment/Decrement buttons */
+#positivePromptIncrement,
+#positivePromptDecrement,
+#negativePromptIncrement,
+#negativePromptDecrement {
+  position: relative;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.25rem;
+  line-height: 1.7rem;
+  text-align: center;
+  border: none;
+  background-color: #ddd;
+  transition: background-color 0.3s ease;
+}
+
+#positivePromptIncrement:hover,
+#positivePromptDecrement:hover,
+#negativePromptIncrement:hover,
+#negativePromptDecrement:hover {
+  background-color: #ccc;
+}
+
+/* To center the "+" and "-" signs */
+#positivePromptIncrement::before,
+#positivePromptDecrement::before,
+#negativePromptIncrement::before,
+#negativePromptDecrement::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Assign the content */
+#positivePromptIncrement::before,
+#negativePromptIncrement::before {
+  content: "+";
+}
+
+#positivePromptDecrement::before,
+#negativePromptDecrement::before {
+  content: "-";
 }
 
 /* Results */
